@@ -98,7 +98,15 @@ export const AskMemory: React.FC = () => {
             if (parsed.type === 'text') {
               contentString = parsed.text || '';
             } else if (parsed.type === 'file') {
-              contentString = `[Uploaded File: ${parsed.fileName}]\nContent:\n${parsed.data || ''}`;
+              contentString = `[Uploaded File: ${parsed.fileName}]\n`;
+              if (parsed.description) {
+                contentString += `Description/Context: ${parsed.description}\n`;
+              }
+              if (parsed.data && !parsed.data.startsWith('data:')) {
+                contentString += `Content:\n${parsed.data}`;
+              } else if (parsed.data && parsed.data.startsWith('data:')) {
+                contentString += `(Note: This is a binary/media file. Direct text content was not extracted.)`;
+              }
             } else if (parsed.type === 'url') {
               contentString = `[Indexed URL: ${parsed.url}]\nContext/Description: ${parsed.description || ''}`;
             }

@@ -31,6 +31,7 @@ export const AddMemory: React.FC<AddMemoryProps> = ({ isOpen, onClose, onSuccess
   const [fileName, setFileName] = useState('');
   const [fileContent, setFileContent] = useState('');
   const [fileSize, setFileSize] = useState<number | null>(null);
+  const [fileDescription, setFileDescription] = useState('');
 
   // Tab 3: URL Content
   const [urlInput, setUrlInput] = useState('');
@@ -72,6 +73,7 @@ export const AddMemory: React.FC<AddMemoryProps> = ({ isOpen, onClose, onSuccess
     setFileName('');
     setFileContent('');
     setFileSize(null);
+    setFileDescription('');
     setUrlInput('');
     setUrlDescription('');
     setErrorMessage('');
@@ -101,7 +103,7 @@ export const AddMemory: React.FC<AddMemoryProps> = ({ isOpen, onClose, onSuccess
         rawContent = JSON.stringify({ type: 'text', text: noteContent });
       } else if (activeTab === 'file') {
         if (!fileContent) throw new Error('Please select a file.');
-        rawContent = JSON.stringify({ type: 'file', fileName, size: fileSize, data: fileContent });
+        rawContent = JSON.stringify({ type: 'file', fileName, size: fileSize, data: fileContent, description: fileDescription });
       } else if (activeTab === 'url') {
         if (!urlInput.trim()) throw new Error('URL is required.');
         rawContent = JSON.stringify({ type: 'url', url: urlInput, description: urlDescription });
@@ -286,28 +288,40 @@ export const AddMemory: React.FC<AddMemoryProps> = ({ isOpen, onClose, onSuccess
             )}
 
             {activeTab === 'file' && (
-              <div className="flex flex-col gap-3">
-                <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Select File</label>
-                <div className="relative border border-dashed border-violet-500/20 hover:border-violet-500/40 rounded-xl p-6 bg-[#0c0c24] transition-all flex flex-col items-center justify-center gap-2 group cursor-pointer">
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Select File</label>
+                  <div className="relative border border-dashed border-violet-500/20 hover:border-violet-500/40 rounded-xl p-6 bg-[#0c0c24] transition-all flex flex-col items-center justify-center gap-2 group cursor-pointer">
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <UploadCloud className="h-8 w-8 text-violet-400 group-hover:scale-110 transition-transform duration-300" />
+                    {fileName ? (
+                      <div className="text-center">
+                        <p className="text-xs font-semibold text-emerald-400">{fileName}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">
+                          {(fileSize ? fileSize / 1024 : 0).toFixed(1)} KB
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <p className="text-xs font-semibold text-white">Click or drag file to select</p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">Text, Markdown, JSON or any raw data (max 200KB)</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">File Description/Context</label>
+                  <textarea
+                    value={fileDescription}
+                    onChange={(e) => setFileDescription(e.target.value)}
+                    placeholder="Describe the file contents or explain why you are saving it so the AI companion can reason over it..."
+                    rows={3}
+                    className="w-full px-4 py-2.5 bg-[#0c0c24] border border-violet-500/20 hover:border-violet-500/35 focus:border-cyan-400 rounded-xl text-sm text-white placeholder-gray-500 outline-none transition-colors resize-none"
                   />
-                  <UploadCloud className="h-8 w-8 text-violet-400 group-hover:scale-110 transition-transform duration-300" />
-                  {fileName ? (
-                    <div className="text-center">
-                      <p className="text-xs font-semibold text-emerald-400">{fileName}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
-                        {(fileSize ? fileSize / 1024 : 0).toFixed(1)} KB
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <p className="text-xs font-semibold text-white">Click or drag file to select</p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">Text, Markdown, JSON or any raw data (max 200KB)</p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

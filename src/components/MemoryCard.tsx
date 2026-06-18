@@ -172,23 +172,43 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory }) => {
             )}
 
             {decrypted.type === 'file' && (
-              <div className="flex flex-col gap-4 items-center justify-center py-12 bg-[#04040c]/30 border border-violet-500/5 rounded-xl">
-                <div className="p-4 bg-cyan-600/10 text-cyan-400 rounded-full">
-                  <FileText className="h-10 w-10" />
+              <div className="flex flex-col gap-4 bg-[#04040c]/30 border border-violet-500/5 rounded-xl p-4">
+                <div className="flex flex-col gap-4 items-center justify-center py-4 border-b border-violet-500/5">
+                  <div className="p-4 bg-cyan-600/10 text-cyan-400 rounded-full">
+                    <FileText className="h-10 w-10" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-white">{decrypted.fileName}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Size: {(decrypted.size ? decrypted.size / 1024 : 0).toFixed(1)} KB
+                    </p>
+                  </div>
+                  <button
+                    onClick={downloadDecryptedFile}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-cyan-600/10 transition-colors"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span>Decrypt & Download File</span>
+                  </button>
                 </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold text-white">{decrypted.fileName}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Size: {(decrypted.size ? decrypted.size / 1024 : 0).toFixed(1)} KB
-                  </p>
-                </div>
-                <button
-                  onClick={downloadDecryptedFile}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-cyan-600/10 transition-colors"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                  <span>Decrypt & Download File</span>
-                </button>
+                {decrypted.description && (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs text-gray-500">Decrypted Context</span>
+                    <p className="text-xs text-gray-300 leading-relaxed">
+                      {decrypted.description}
+                    </p>
+                  </div>
+                )}
+                {decrypted.data && !decrypted.data.startsWith('data:') && (
+                  <div className="flex flex-col gap-1 border-t border-violet-500/5 pt-3">
+                    <span className="text-xs text-gray-500">File Text Content</span>
+                    <div className="bg-[#04040c]/40 border border-violet-500/5 rounded-xl p-3 max-h-[150px] overflow-y-auto">
+                      <p className="text-xs text-gray-300 whitespace-pre-wrap leading-relaxed font-mono">
+                        {decrypted.data}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
