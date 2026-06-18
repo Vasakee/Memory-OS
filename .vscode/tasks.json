@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Inspect git repo",
+			"type": "shell",
+			"command": "cd /Users/basil/Desktop/codes/memory-OS && echo 'PWD:' $PWD && ls -la && git status --short --branch && git log --oneline --decorate --max-count=5",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
