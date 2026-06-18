@@ -18,6 +18,12 @@ export const uploadToZeroG = async (encryptedData: string): Promise<string> => {
     throw new Error('ZG_PRIVATE_KEY is not configured in the server environment. Please define it in your .env file.');
   }
 
+  // Normalize private key hex formatting (must start with 0x and strip any leading/trailing quotes)
+  let formattedKey = privateKey.trim().replace(/^["']|["']$/g, '');
+  if (!formattedKey.startsWith('0x')) {
+    formattedKey = `0x${formattedKey}`;
+  }
+
   // Create temporary file
   const tempId = Math.random().toString(36).substring(7);
   const tempPath = path.join(os.tmpdir(), `memoryos_upload_${tempId}.txt`);
@@ -45,7 +51,7 @@ export const uploadToZeroG = async (encryptedData: string): Promise<string> => {
 
     // Connect provider, signer and indexer with staticNetwork enabled to prevent timeouts
     const provider = new ethers.JsonRpcProvider(evmRpc, undefined, { staticNetwork: true });
-    const signer = new ethers.Wallet(privateKey, provider);
+    const signer = new ethers.Wallet(formattedKey, provider);
     const indexer = new Indexer(indexerRpc);
 
     // Upload via indexer
